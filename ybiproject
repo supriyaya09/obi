@@ -1,0 +1,47 @@
+import datetime
+from sklearn.tree import DecisionTreeClassifier
+import numpy as np
+
+# Example training data: [hour, temperature, light_level]
+# hour: 0-23, temperature: Celsius, light_level: 0 (dark) - 100 (bright)
+X = [
+    [7, 18, 10],   # Early morning, cool, dark
+    [12, 24, 80],  # Noon, warm, bright
+    [19, 21, 30],  # Evening, comfortable, dim
+    [23, 16, 5],   # Night, cold, dark
+]
+# Labels: [lights_on, thermostat_on]
+# lights_on: 1=on, 0=off; thermostat_on: 1=heating/cooling, 0=off
+y = [
+    [1, 1],  # Early morning: lights and heat on
+    [0, 0],  # Noon: everything off
+    [1, 0],  # Evening: lights on, no HVAC
+    [1, 1],  # Night: lights and heat on
+]
+
+# Train a simple decision tree
+clf = DecisionTreeClassifier()
+clf.fit(X, y)
+
+def get_sensor_data():
+    # Replace these with real sensor/API calls in a real system
+    now = datetime.datetime.now()
+    hour = now.hour
+    temperature = float(input("Current temperature (Celsius): "))
+    light_level = float(input("Current light level (0-100): "))
+    return [hour, temperature, light_level]
+
+def control_devices(lights_on, thermostat_on):
+    if lights_on:
+        print("Turning ON the lights.")
+    else:
+        print("Turning OFF the lights.")
+    if thermostat_on:
+        print("Thermostat is ON (heating or cooling).")
+    else:
+        print("Thermostat is OFF.")
+
+if __name__ == "__main__":
+    sensor_data = get_sensor_data()
+    prediction = clf.predict([sensor_data])[0]
+    control_devices(lights_on=prediction[0], thermostat_on=prediction[1])
